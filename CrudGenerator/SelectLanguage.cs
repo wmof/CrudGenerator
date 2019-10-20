@@ -120,8 +120,6 @@ namespace CrudGenerator
         private void btFinish_Click(object sender, EventArgs e)
         {
             Service service = new Service();
-            Conn bd = new Conn(new ConnUser { Database = "u376420042_lybe", Uid = "u376420042_user", Server = "sql50.main-hosting.eu", Pwd = "8o|pD#g8" });
-            Tables = bd.selectTable();
             string folder = ChooseFolder() + "\\";
             foreach (var tabela in Tables)
             {
@@ -142,6 +140,18 @@ namespace CrudGenerator
                 DaoFile.WriteLine(service.gerarDao(tabela.metaDados, tabela.Nome));
                 DaoFile.Close();
             }            
+        }
+
+        private void SelectLanguage_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void BtClonar_Click(object sender, EventArgs e)
+        {
+            //Conn bd = new Conn(new ConnUser { Database = "u376420042_lybe", Uid = "u376420042_user", Server = "sql50.main-hosting.eu", Pwd = "8o|pD#g8" });
+            Conn bd = new Conn(new ConnUser { Database = textBanco.Text, Uid = textUsuario.Text, Server = textServidor.Text, Pwd = textSenha.Text });
+            Tables = bd.selectTable();
         }
     }
 }
