@@ -136,7 +136,7 @@ namespace CrudGenerator
                 ControllerFile.WriteLine(service.gerarController(tabela.metaDados, tabela.Nome));
                 ControllerFile.Close();
                 StreamWriter DaoFile;
-                DaoFile = File.CreateText(folder + "BD"+ tabela.Nome + ".php");
+                DaoFile = File.CreateText(folder + "BD_"+ tabela.Nome + ".php");
                 DaoFile.WriteLine(service.gerarDao(tabela.metaDados, tabela.Nome));
                 DaoFile.Close();
             }            
