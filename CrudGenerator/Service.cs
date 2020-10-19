@@ -31,6 +31,22 @@ namespace CrudGenerator
             return obj;
         }
 
+        public string gerarBanco(ConnUser bd)
+        {
+
+            string obj = "";
+            obj = "<?php \nclass BDConexao{\n" +
+                "\n" +
+                "\t public function getConexao(){" +
+                "\n\t\t$conn = new mysqli(\""+bd.Server+ "\", \"" + bd.Uid + "\", \"" + bd.Pwd + "\", \"" + bd.Database + "\");" +
+                "\n\t\treturn $conn;" +
+                "\n\t}" +
+                "\n}" +
+                "\n?>";
+            
+            return obj;
+        }
+
         public string nomeProprio(string str)
         {
 
@@ -39,14 +55,14 @@ namespace CrudGenerator
             return str;
         }
 
-        public string gerarDao(List<Meta> arrayMeta, string tabelaNome)
+        public string gerarRepository(List<Meta> arrayMeta, string tabelaNome)
         {
 
             string sql = "";
 
             sql = "<?php\n"
                     + "require_once(\"Banco.php\");\n"
-                    + "require_once(\"" + nomeProprio(tabelaNome) + ".php\");\n\n"
+                    + "require_once(\"../Model/" + nomeProprio(tabelaNome) + ".php\");\n\n"
                     + "class BD" + nomeProprio(tabelaNome) + "{\n"
                     //
                     //
@@ -156,8 +172,8 @@ namespace CrudGenerator
             string controller = "";
 
             controller = "<?php\n"
-                    + "require_once(\"BD_" + tabelaNome + ".php\");\n"
-                    + "require_once(\"" + tabelaNome + ".php\");\n\n"
+                    + "require_once(\"../Repository/BD_" + nomeProprio(tabelaNome) + ".php\");\n"
+                    + "require_once(\"../Model/" + nomeProprio(tabelaNome) + ".php\");\n\n"
                     + "class Controller_" + nomeProprio(tabelaNome) + "{\n";
             //
             //
@@ -235,8 +251,8 @@ namespace CrudGenerator
             }
             crud = crud + "\n\t</tr>\n"
                     + "<?php\n"
-                    + "require_once (\"BD_" + nomeProprio(tabelaNome) + ".php\");\n"
-                    + "require_once (\"" + nomeProprio(tabelaNome) + ".php\");\n"
+                    + "require_once (\"../Repository/BD_" + nomeProprio(tabelaNome) + ".php\");\n"
+                    + "require_once (\"../Model/" + nomeProprio(tabelaNome) + ".php\");\n"
                     + "$bd = new BD" + nomeProprio(tabelaNome) + "();\n"
                     + "$array" + nomeProprio(tabelaNome) + " = $bd->select();\n"
                     + "foreach ($array" + nomeProprio(tabelaNome) + " as $key => $value) {\n"
@@ -261,8 +277,8 @@ namespace CrudGenerator
                     + "?>\n"
                     + "</table>\n";
             //Agora Form
-            crud = crud + "<h2>Formulário de cadastro de Afiliado</h2>\n"
-                    + "<form method=\"post\" action=\"Controller_" + nomeProprio(tabelaNome) + ".php\" class=\"form\">\n";
+            crud = crud + "<h2>Formulário de cadastro de " + nomeProprio(tabelaNome) +"</h2>\n"
+                    + "<form method=\"post\" action=\"../Controller/Controller_" + nomeProprio(tabelaNome) + ".php\" class=\"form\">\n";
 
             for (int i = 0; i < arrayMeta.Count(); i++)
             {
@@ -287,4 +303,5 @@ namespace CrudGenerator
             return crud;
         }
     }
+    
 }

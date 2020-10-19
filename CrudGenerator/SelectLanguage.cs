@@ -121,24 +121,35 @@ namespace CrudGenerator
         {
             Service service = new Service();
             string folder = ChooseFolder() + "\\";
+
+            DirectoryInfo raiz = new DirectoryInfo(folder);
+            raiz.CreateSubdirectory("Model");
+            raiz.CreateSubdirectory("Crud");
+            raiz.CreateSubdirectory("Controller");
+            raiz.CreateSubdirectory("Repository");
+            StreamWriter RepositoryConnFile;
+            RepositoryConnFile = File.CreateText(folder + "Repository\\Banco.php");
+            ConnUser bd = new ConnUser { Database = textBanco.Text, Uid = textUsuario.Text, Server = textServidor.Text, Pwd = textSenha.Text };
+            RepositoryConnFile.WriteLine(service.gerarBanco(bd));
+            RepositoryConnFile.Close();
             foreach (var tabela in Tables)
             {
-                StreamWriter ObFile;
-                ObFile = File.CreateText(folder + tabela.Nome + ".php");
-                ObFile.WriteLine(service.gerarOb(tabela.metaDados, tabela.Nome));
-                ObFile.Close();
+                StreamWriter ModelFile;
+                ModelFile = File.CreateText(folder + "Model\\" + service.nomeProprio(tabela.Nome) + ".php");
+                ModelFile.WriteLine(service.gerarOb(tabela.metaDados, tabela.Nome));
+                ModelFile.Close();
                 StreamWriter CrudFile;
-                CrudFile = File.CreateText(folder +"Crud_" + tabela.Nome + ".php");
+                CrudFile = File.CreateText(folder + "Crud\\Crud_" + service.nomeProprio(tabela.Nome) + ".php");
                 CrudFile.WriteLine(service.gerarcrud(tabela.metaDados, tabela.Nome));
                 CrudFile.Close();
                 StreamWriter ControllerFile;
-                ControllerFile = File.CreateText(folder + "Controller_" + tabela.Nome + ".php");
+                ControllerFile = File.CreateText(folder + "Controller\\Controller_" + service.nomeProprio(tabela.Nome) + ".php");
                 ControllerFile.WriteLine(service.gerarController(tabela.metaDados, tabela.Nome));
                 ControllerFile.Close();
-                StreamWriter DaoFile;
-                DaoFile = File.CreateText(folder + "BD_"+ tabela.Nome + ".php");
-                DaoFile.WriteLine(service.gerarDao(tabela.metaDados, tabela.Nome));
-                DaoFile.Close();
+                StreamWriter RepositoryFile;
+                RepositoryFile = File.CreateText(folder + "Repository\\BD_"+ service.nomeProprio(tabela.Nome) + ".php");
+                RepositoryFile.WriteLine(service.gerarRepository(tabela.metaDados, tabela.Nome));
+                RepositoryFile.Close();                
             }            
         }
 
@@ -150,8 +161,9 @@ namespace CrudGenerator
         private void BtClonar_Click(object sender, EventArgs e)
         {
             //Conn bd = new Conn(new ConnUser { Database = "u376420042_lybe", Uid = "u376420042_user", Server = "sql50.main-hosting.eu", Pwd = "8o|pD#g8" });
-            Conn bd = new Conn(new ConnUser { Database = textBanco.Text, Uid = textUsuario.Text, Server = textServidor.Text, Pwd = textSenha.Text });
-            Tables = bd.selectTable();
+            ConnUser bd = new ConnUser { Database = textBanco.Text, Uid = textUsuario.Text, Server = textServidor.Text, Pwd = textSenha.Text };
+            Conn conn = new Conn(bd);
+            Tables = conn.selectTable(bd);
         }
     }
 }
