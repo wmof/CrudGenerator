@@ -38,19 +38,19 @@ namespace CrudGenerator
             obj = "<?php \nclass BDConexao{\n" +
                 "\n" +
                 "\t public function getConexao(){" +
-                "\n\t\t$conn = new mysqli(\""+bd.Server+ "\", \"" + bd.Uid + "\", \"" + bd.Pwd + "\", \"" + bd.Database + "\");" +
+                "\n\t\t$conn = new mysqli(\"" + bd.Server + "\", \"" + bd.Uid + "\", \"" + bd.Pwd + "\", \"" + bd.Database + "\");" +
                 "\n\t\treturn $conn;" +
                 "\n\t}" +
                 "\n}" +
                 "\n?>";
-            
+
             return obj;
         }
 
         public string nomeProprio(string str)
         {
 
-            str = str.Substring(0, 1).ToUpper() + str.Substring(1, str.Length-1);
+            str = str.Substring(0, 1).ToUpper() + str.Substring(1, str.Length - 1);
 
             return str;
         }
@@ -162,6 +162,33 @@ namespace CrudGenerator
             sql = sql + "\n\t\t\t$resposta[] = $" + tabelaNome + ";\n"
                     + "\t\t}\n";
             sql = sql + "\t" + "return $resposta;\n";
+            sql = sql + "\t}\n";
+
+            //
+            //
+            //ListaJson
+            //
+            //
+            sql = sql + "\n\n\t" + "public function selectjson() {\n"
+                    + "\t\t$banco = new BDConexao();\n"
+                    + "\t\t$conn = $banco->getConexao();\n"
+                    + "\t\t$sql = \"SELECT * FROM " + tabelaNome + "\";\n"
+                    + "\t\t$result = $conn->query($sql);\n"
+                    + "\t\t$resposta = array();\n"
+                    + "\t\twhile ($linha = mysqli_fetch_array($result)) {"
+                    + "\n\t\t\t$item=array(";
+            for (int i = 0; i < arrayMeta.Count(); i++)
+            {
+                sql = sql + "\n\t\t\t\t\"" + nomeProprio(arrayMeta.ElementAt(i).Nome) + "\" => $linha[\"" + nomeProprio(arrayMeta.ElementAt(i).Nome) + "\"]";
+                if (i != arrayMeta.Count())
+                {
+                    sql = sql + ",";
+                }
+            }
+            sql = sql + "\n\t\t\t);";
+            sql = sql + "\n\t\t\tarray_push($resposta, $item);\n"
+                    + "\t\t}\n";
+            sql = sql + "\t\t" + "return json_encode($resposta);\n";
             sql = sql + "\t}\n}";
             return sql;
         }
@@ -220,7 +247,18 @@ namespace CrudGenerator
             controller = controller + "\t\t$bd = new BD" + nomeProprio(tabelaNome) + "();\n"
                     + "\t\t$bd->update($" + tabelaNome + ");\n"
                     + "\t\tprint (\"" + nomeProprio(tabelaNome) + " Alterado\");\n"
-                    + "\t}\n}\n";
+                    + "\t}\n";
+
+            //
+            //
+            //GetJson
+            //
+            //
+            controller = controller + "\n\n\tpublic function get(){\n ";
+            controller = controller + "\t\t$bd = new BD" + nomeProprio(tabelaNome) + "();\n"
+                    + "\t\t$result = $bd->selectjson();\n"
+                    + "\t\techo ($result);\n"
+                    + "\t}\n}";
             //
             //
             //Method
@@ -235,7 +273,23 @@ namespace CrudGenerator
                     + "\telse {\n"
                     + "\t\techo 'Metodo incorreto';\n"
                     + "\t}\n"
-                    + "}";
+                    + "}\n"
+                    + "else {\n"
+                    + "\tif (($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['method']))){\n"
+                    + "\t\tif(method_exists('Controller_" + nomeProprio(tabelaNome) + "', $method)) {\n"
+                    + "\t\t\t$controller = new Controller_" + nomeProprio(tabelaNome) + ";\n"
+                    + "\t\t\t$controller->$method($_GET);\n"
+                    + "\t\t}\n"
+                    + "\t\telse {\n"
+                    + "\t\t\techo 'Metodo incorreto';\n"
+                    + "\t\t}\n"
+                    + "\t}\n" +
+                    "\t else{\n" +
+                    "\t\t$controller = new Controller_" + nomeProprio(tabelaNome) + ";\n" +
+                    "\t\t$controller->get();\n" +
+                    "\t}\n" +
+                    "}";
+
             return controller;
         }
 
@@ -277,7 +331,7 @@ namespace CrudGenerator
                     + "?>\n"
                     + "</table>\n";
             //Agora Form
-            crud = crud + "<h2>Formulário de cadastro de " + nomeProprio(tabelaNome) +"</h2>\n"
+            crud = crud + "<h2>Formulário de cadastro de " + nomeProprio(tabelaNome) + "</h2>\n"
                     + "<form method=\"post\" action=\"../Controller/Controller_" + nomeProprio(tabelaNome) + ".php\" class=\"form\">\n";
 
             for (int i = 0; i < arrayMeta.Count(); i++)
@@ -303,5 +357,5 @@ namespace CrudGenerator
             return crud;
         }
     }
-    
+
 }

@@ -36,15 +36,13 @@ namespace CrudGenerator
             }
         }
 
-        public List<Table> selectTable(ConnUser bd)
-        {
-
-            Conn conn = new Conn(new ConnUser { Database = bd.Database, Uid = bd.Uid, Server = bd.Server, Pwd = bd.Pwd});
+        public List<Table> selectTable(Conn bd)
+        {   
             DataSet dataset = new DataSet();
             List<Table> listTable = new List<Table>();
 
             MySqlDataAdapter adapter = new MySqlDataAdapter();
-            adapter.SelectCommand = new MySqlCommand("SELECT table_name FROM information_schema.tables WHERE table_type = 'base table'", conn.conect());
+            adapter.SelectCommand = new MySqlCommand("SELECT table_name FROM information_schema.tables WHERE table_type = 'base table'", bd.conect());
             adapter.Fill(dataset);
 
             foreach (DataRow linha in dataset.Tables[0].Rows)
@@ -54,7 +52,7 @@ namespace CrudGenerator
 
                 DataSet dataset2 = new DataSet();
                 MySqlDataAdapter adapter2 = new MySqlDataAdapter();
-                adapter2.SelectCommand = new MySqlCommand("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + Table.Nome + "'", conn.conect());
+                adapter2.SelectCommand = new MySqlCommand("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + Table.Nome + "'", bd.conect());
                 adapter2.Fill(dataset2);
                 List<Meta> listMeta = new List<Meta>();
 

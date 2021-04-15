@@ -53,7 +53,7 @@ namespace CrudGenerator
                 MessageBox.Show("Valor invalido!");
                 return;
             }
-            if (Tables.Where(x=>x.Nome == textBoxTableName.Text).Any())
+            if (Tables.Where(x => x.Nome == textBoxTableName.Text).Any())
             {
                 MessageBox.Show("Tabela ja existente!");
                 return;
@@ -67,7 +67,7 @@ namespace CrudGenerator
 
         private void btAddCollunn_Click(object sender, EventArgs e)
         {
-            if (""== labelTable.Text)
+            if ("" == labelTable.Text)
             {
                 MessageBox.Show("Tabela não selecioada!");
                 return;
@@ -121,7 +121,7 @@ namespace CrudGenerator
         {
             Service service = new Service();
             string folder = ChooseFolder() + "\\";
-
+            
             DirectoryInfo raiz = new DirectoryInfo(folder);
             raiz.CreateSubdirectory("Model");
             raiz.CreateSubdirectory("Crud");
@@ -129,7 +129,7 @@ namespace CrudGenerator
             raiz.CreateSubdirectory("Repository");
             StreamWriter RepositoryConnFile;
             RepositoryConnFile = File.CreateText(folder + "Repository\\Banco.php");
-            ConnUser bd = new ConnUser { Database = textBanco.Text, Uid = textUsuario.Text, Server = textServidor.Text, Pwd = textSenha.Text };
+            ConnUser bd = new ConnUser { Database = "u376420042_oficina", Uid = "u376420042_oficina", Server = "sql50.main-hosting.eu", Pwd = "!Q@W3e4r" };
             RepositoryConnFile.WriteLine(service.gerarBanco(bd));
             RepositoryConnFile.Close();
             foreach (var tabela in Tables)
@@ -149,8 +149,8 @@ namespace CrudGenerator
                 StreamWriter RepositoryFile;
                 RepositoryFile = File.CreateText(folder + "Repository\\BD_"+ service.nomeProprio(tabela.Nome) + ".php");
                 RepositoryFile.WriteLine(service.gerarRepository(tabela.metaDados, tabela.Nome));
-                RepositoryFile.Close();                
-            }            
+                RepositoryFile.Close();
+            }
         }
 
         private void SelectLanguage_Load(object sender, EventArgs e)
@@ -161,9 +161,8 @@ namespace CrudGenerator
         private void BtClonar_Click(object sender, EventArgs e)
         {
             //Conn bd = new Conn(new ConnUser { Database = "u376420042_lybe", Uid = "u376420042_user", Server = "sql50.main-hosting.eu", Pwd = "8o|pD#g8" });
-            ConnUser bd = new ConnUser { Database = textBanco.Text, Uid = textUsuario.Text, Server = textServidor.Text, Pwd = textSenha.Text };
-            Conn conn = new Conn(bd);
-            Tables = conn.selectTable(bd);
+            Conn bd = new Conn(new ConnUser { Database = "u376420042_oficina", Uid = "u376420042_oficina", Server = "sql50.main-hosting.eu", Pwd = "!Q@W3e4r" });
+            Tables = bd.selectTable(bd);
         }
     }
 }
