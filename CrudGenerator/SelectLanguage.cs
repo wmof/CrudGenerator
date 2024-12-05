@@ -161,7 +161,7 @@ namespace CrudGenerator
         private void BtClonar_Click(object sender, EventArgs e)
         {
             //Conn bd = new Conn(new ConnUser { Database = "u376420042_lybe", Uid = "u376420042_user", Server = "sql50.main-hosting.eu", Pwd = "8o|pD#g8" });
-            Conn bd = new Conn(new ConnUser { Database = "u376420042_oficina", Uid = "u376420042_oficina", Server = "sql50.main-hosting.eu", Pwd = "!Q@W3e4r" });
+            Conn bd = new Conn(new ConnUser { Database = "u376420042_oficina", Uid = "u376420042_oficina", Server = "srv794.hstgr.io", Pwd = "Qq!11234" });
             Tables = bd.selectTable(bd);
         }
     }
